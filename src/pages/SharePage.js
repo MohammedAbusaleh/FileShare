@@ -1,12 +1,14 @@
 import React, { useState, useEffect } from 'react'
 import FileUpload from '../FileUpload'
+import FileList from '../FileList'
 
 
 function SharePage() {
   const [files, setFile] = useState([])
 
   function handleFile({target}) {
-    setFile((prevFiles) => [...prevFiles, ...target.files])
+    const newFiles = target.files[0].name
+    setFile((prevFiles) => [...prevFiles, newFiles])
   }
 
   useEffect(() => {
@@ -19,6 +21,7 @@ function SharePage() {
           <input type='file' name='file' onChange={handleFile}/>
         </form>
         <FileUpload />
+        <FileList names={files}/>
     </div>
     );
 }
