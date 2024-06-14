@@ -1,16 +1,18 @@
 import './index.css';
-import { BrowserRouter as Router, Route, Routes } from 'react-router-dom'
+import { Route, Routes } from 'react-router-dom'
 import Home from './pages/Home'
+import SharePage from './pages/SharePage';
+import ErrorPage from './pages/ErrorPage';
 
 
 function App() {
   return (
     <>
-      <Router>
-        <Routes>
-          <Route path='/dd' element={<Home />} />
-        </Routes>
-      </Router>
+      <Routes>
+        <Route path='/' element={<Home />} />
+        <Route path='/dd' element={<SharePage />} />
+        <Route path='/*' element={<ErrorPage />} />
+      </Routes>
     </>
   );
 }
