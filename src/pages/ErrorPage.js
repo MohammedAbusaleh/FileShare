@@ -1,5 +1,5 @@
 import React from 'react'
-import logo from '../OursLogo.png';
+import logo from '../assets/OursLogo.png';
 
 function ErrorPage() {
   return (

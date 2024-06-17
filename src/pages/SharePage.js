@@ -1,27 +1,31 @@
 import React, { useState, useEffect } from 'react'
-import FileUpload from '../FileUpload'
-import FileList from '../FileList'
+import FileList from '../components/FileList'
+import DragNDrop from '../components/DragNDrop'
+import SizeDisplaier from '../components/SizeDisplaier'
+import FilesChat from '../components/FilesChat'
+import SendFilesButton from '../components/SendFilesButton'
 
 
 function SharePage() {
-  const [files, setFile] = useState([])
-
-  function handleFile({target}) {
-    const newFiles = target.files[0].name
-    setFile((prevFiles) => [...prevFiles, newFiles])
-  }
+  const [files, setFiles] = useState([])
+  const [sharedFiles, setSharedFiles] = useState([])
 
   useEffect(() => {
     console.log(files)
+    files.map((file) => console.log(file.size))
   }, [files])
 
   return (
-    <div className='min-h-screen bg-slate-800 flex flex-col justify-center'>
-        <form>
-          <input type='file' name='file' onChange={handleFile}/>
-        </form>
-        <FileUpload />
-        <FileList names={files}/>
+    <div className='bg-customeGrey h-screen flex gap-10 p-4'>
+      <div className='h-full w-3/5 flex flex-col gap-5'>
+        <DragNDrop setFiles={setFiles}/>
+        {/* <SizeDisplaier files={files}/> */}
+        <FileList files={files} setFiles={setFiles}/>
+        <SendFilesButton files={files} setFiles={setFiles} setSharedFiles={setSharedFiles}/>
+      </div>
+      <div className='w-2/5'>
+        <FilesChat sharedFiles={sharedFiles}/>
+      </div>
     </div>
     );
 }
