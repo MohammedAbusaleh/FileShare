@@ -1,7 +1,7 @@
 import React from 'react'
-import gifBackground from '../background.gif';
-import Header from '../Header'
-import CodeForm from '../CodeForm'
+import gifBackground from '../assets/background.gif';
+import Header from '../components/Header'
+import CodeForm from '../components/CodeForm'
 
 function Home() {
     return (
