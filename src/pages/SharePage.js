@@ -10,11 +10,6 @@ function SharePage() {
   const [files, setFiles] = useState([])
   const [sharedFiles, setSharedFiles] = useState([])
 
-  useEffect(() => {
-    console.log(files)
-    files.map((file) => console.log(file.size))
-  }, [files])
-
   return (
     <div className='bg-customeGrey h-screen flex gap-10 p-4'>
       <div className='h-full w-3/5 flex flex-col gap-5'>

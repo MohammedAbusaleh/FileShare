@@ -1,31 +1,37 @@
-import React from 'react';
+import { React, useEffect, useState } from 'react';
+import { storage } from '../firebase';
+import { ref, listAll, getDownloadURL } from 'firebase/storage';
 
 function FilesChat({ sharedFiles }) {
+  const [dbFiles, setDbFiles] = useState([])
 
-  const downloadFile = (file) => {
-    const url = URL.createObjectURL(file);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = file.name;
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    URL.revokeObjectURL(url);
-  };
+  useEffect(() => {
+    const dbFilesRef = ref(storage, "")
+    listAll(dbFilesRef).then((response) => {
+      response.items.forEach((item) => {
+        getDownloadURL(item).then((url) => {
+          setDbFiles((prev) => [...prev, url])
+          console.log(url)
+        })
+      })
+    }) 
+  }, [])
+
   
   return (
     <div className='bg-customeDarkGrey h-full border rounded-lg border-transparent overflow-y-scroll p-4'>
-      {sharedFiles.map((file, index) => (
-        <div
+      {dbFiles.map((file, index) => (
+        <a
           key={index}
+          href={file}
+          download
           className={`p-2 w-2/5 bg-white mb-2 shadow rounded ${
-            index % 5 === 0 ? 'float-start' : 'float-end'
+            index % 2 === 0 ? 'float-start' : 'float-end'
           }`}
-          onClick={() => downloadFile(file)}
           style={{ clear: 'both' }} // Ensure elements clear previous floats (GOOGLE)
         >
-          {file.name}
-        </div>
+          dd
+        </a>
       ))}
     </div>
   );

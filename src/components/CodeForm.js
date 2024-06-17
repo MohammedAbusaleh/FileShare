@@ -4,10 +4,14 @@ import { useNavigate } from 'react-router-dom'
 function CodeForm() {
   const navigate = useNavigate()
 
+  const handleSubmit = () => {
+
+  }
+
   return (
     <div className='min-h-64 min-w-96 rounded-lg bg-customeGrey/50 flex items-center justify-center'>        
-      <form id="roomForm" onsubmit="handleSubmit(event)" className='flex flex-col items-center'>
-        <label for="code" className='mb-2 text-2xl text-white font-semibold'>
+      <form id="roomForm" onSubmit={() => handleSubmit} className='flex flex-col items-center'>
+        <label htmlFor="code" className='mb-2 text-2xl text-white font-semibold'>
           Enter Room Code
         </label>
 
