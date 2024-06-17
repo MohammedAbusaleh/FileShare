@@ -10,7 +10,7 @@ function SendFilesButton({ files, setFiles, setSharedFiles }) {
       }
 
       for (const file of files) {
-        const imageRef = ref(storage,  `${file.name + v4()}`)
+        const imageRef = ref(storage,  `${v4() + file.name}`)
 
         try {
           await uploadBytes(imageRef, file)
