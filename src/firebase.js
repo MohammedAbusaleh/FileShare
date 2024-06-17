@@ -3,7 +3,7 @@ import { get } from "firebase/database";
 import { getStorage } from "firebase/storage";
 
 const firebaseConfig = {
-  apiKey: "AIzaSyDnl5unn3tVaZmOR4USyIELx9Tcn6yxhrk",
+  apiKey: process.env.API_KEY,
   authDomain: "fileshare-b60e1.firebaseapp.com",
   projectId: "fileshare-b60e1",
   storageBucket: "fileshare-b60e1.appspot.com",
