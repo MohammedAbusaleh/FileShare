@@ -9,7 +9,7 @@ function DragNDrop({ setFiles }) {
     const {getRootProps, getInputProps, isDragActive} = useDropzone({onDrop})
 
     return (
-        <div {...getRootProps()} className='flex h-3/6'>
+        <div {...getRootProps()} className='h-screen flex'>
             <input {...getInputProps()} />
             <label htmlFor="dropzone-file" className={`flex flex-col flex-grow items-center justify-center border-2 border-gray-300 border-dashed rounded-lg cursor-pointer dark:hover:bg-bray-800 ${isDragActive ? 'transition-colors duration-1000 bg-red-600 animate-pulse' : 'dark:bg-gray-700 dark:border-gray-600'} dark:hover:border-gray-500 dark:hover:bg-gray-600`}>
             <svg className="w-8 h-8 mb-4 text-gray-500 dark:text-gray-400" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 16">
