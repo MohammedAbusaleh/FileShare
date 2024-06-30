@@ -10,7 +10,7 @@ function App() {
     <>
       <Routes>
         <Route path='/' element={<Home />} />
-        <Route path='/r/:roomCode' element={<SharePage />} />
+        <Route path='/room/:roomCode' element={<SharePage />} />
         <Route path='/*' element={<ErrorPage />} />
       </Routes>
     </>

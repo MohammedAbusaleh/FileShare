@@ -1,7 +1,7 @@
 import React from 'react'
 import gifBackground from '../assets/background.gif';
 import Header from '../components/Header'
-import CodeForm from '../components/CodeForm'
+import CodeFormContainer from '../containers/CodeFormContainer';
 
 function Home() {
     return (
@@ -15,7 +15,7 @@ function Home() {
                 animation: 'moveBackground 10s infinite linear'
             }}
             >
-            <CodeForm />
+            <CodeFormContainer />
             </div>
         </div>
         );

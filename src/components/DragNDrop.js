@@ -1,6 +1,7 @@
 import React, { useCallback } from 'react'
 import { useDropzone } from 'react-dropzone'
 
+
 function DragNDrop({ setFiles }) {
 
     const onDrop = useCallback(acceptedFiles => {
@@ -18,7 +19,7 @@ function DragNDrop({ setFiles }) {
             {
             isDragActive ?
                 <span className="font-semibold mb-2 text-sm text-gray-500 dark:text-gray-400">Drop!</span> :
-                <p className="mb-2 text-sm text-gray-500 dark:text-gray-400"><span className="font-semibold">Click to upload</span> or drag and drop</p>
+                <p className="mb-2 text-sm text-gray-500 dark:text-gray-400"><span className="font-semibold">Click to upload</span> or drag and drop (5 MB max)</p>
             }
             </label>
         </div>

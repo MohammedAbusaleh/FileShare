@@ -1,8 +1,12 @@
-import React from 'react'
+import React, { useState } from 'react'
 
 // rfce: to add the dankey work
 function FileList({ files, setFiles, inSendingProcess }) {
+  const [hoveredIndex, setHoveredIndex] = useState(null);
+
+
   const deleteFile = (indexToDelete) => {
+    setHoveredIndex(null)
     setFiles((prevFiles) => prevFiles.filter((_, index) => index !== indexToDelete))
   }
   
@@ -15,8 +19,10 @@ function FileList({ files, setFiles, inSendingProcess }) {
           key={index}
           onClick={() => deleteFile(index)}
           className={`w-36 p-2 text-white overflow-hidden whitespace-nowrap text-ellipsis font-bold rounded shadow-md hover:bg-red-500 transition-colors duration-200 text-center ${inSendingProcess && index === 0 ? 'animate-pulse bg-red-300' : 'bg-customeGrey'}`}
+          onMouseEnter={() => setHoveredIndex(index)}
+          onMouseLeave={() => setHoveredIndex(null)}
           >
-            {file.name}
+            {hoveredIndex === index ? `${(file.size / 1024).toFixed(2)} KB` : file.name}
           </button>
         ))}
       </div>
