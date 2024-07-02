@@ -1,12 +1,10 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import { useParams, useNavigate } from 'react-router-dom';
 import Header from '../components/Header'
 import FileList from '../components/FileList'
 import DragNDrop from '../components/DragNDrop'
 import SendFilesButtonContainer from '../containers/SendFilesButtonContainer';
 import FilesChatContainer from '../containers/FileChatContainer';
-
-// import SizeDisplaier from '../components/SizeDisplaier'
 
 
 function SharePage() {
@@ -15,8 +13,11 @@ function SharePage() {
   const [sharedFiles, setSharedFiles] = useState([])
   const [inSendingProcess, setInSendingProcess] = useState(false)
   const navigate = useNavigate()
+  const roomCheckRan = useRef(false)
 
   useEffect(() => {
+    if (roomCheckRan.current) return
+
     async function checkRoom() {
       try {
         const response = await fetch(`http://localhost:8000/check/${roomCode}`)

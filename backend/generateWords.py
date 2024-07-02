@@ -2,7 +2,7 @@ import nltk
 from nltk.corpus import brown
 import json
 
-# nltk.download('brown')
+nltk.download('brown')
 
 def precompute_common_words(min_freq=100):
     word_freq = nltk.FreqDist(brown.words())

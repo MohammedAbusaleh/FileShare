@@ -19,8 +19,9 @@ function FilesChatContainer({ sharedFiles, setSharedFiles }) {
         console.error('Error uploading files:', error.message)
       }
     }
-
-    fetchFiles();
+    if (sharedFiles.length === 0) {
+        fetchFiles();
+      }
   }, [])
 
 

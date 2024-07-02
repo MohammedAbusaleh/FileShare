@@ -133,12 +133,9 @@ async def generate_room_id(word_num=3, max_attempts=10):
         
 
 async def clean_old_rooms():
-    time_offset = datetime.datetime.now() - datetime.timedelta(minutes=REFRESH_TIME_DAYS)
+    time_offset = datetime.datetime.now() - datetime.timedelta(days=REFRESH_TIME_DAYS)
 
-    room_docs = (
-        ROOMS_REF
-        .where('createdAt', '<', time_offset)
-    ).stream()
+    room_docs = ROOMS_REF.where('createdAt', '<', time_offset).stream()
 
     try:
         for room_doc in room_docs:
@@ -146,13 +143,17 @@ async def clean_old_rooms():
             room_doc.reference.delete()
             print(f"Deleted room: {room_doc.id}")
 
-            file_docs = (
-                FILES_REF
-                .where('roomId', '==', room_id)
-            ).stream()
+            file_docs = FILES_REF.where('roomId', '==', room_id).stream()
 
             for file_doc in file_docs:
+                file_url = file_doc.get('fileURL')
                 file_doc.reference.delete()
+
+                blob_name = file_url.split('/')[-1].split('?')[0]
+                blob_name = blob_name.replace('%20', ' ')
+                blob = bucket.blob(blob_name)
+                blob.delete()       
+
                 print(f"Deleted file: {file_doc.id} related to room {room_id}")
 
     except Exception as e:
