@@ -10,5 +10,5 @@ def precompute_common_words(min_freq=100):
 
 common_words = precompute_common_words(min_freq=50)
 
-with open('backend/common_words.json', 'w') as f:
+with open('common_words.json', 'w') as f:
     json.dump(common_words, f)

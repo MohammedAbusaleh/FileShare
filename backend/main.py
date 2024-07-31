@@ -1,11 +1,13 @@
 from fastapi import FastAPI, HTTPException, File, UploadFile
-from backend.firebase_config import db, bucket
+from firebase_config import db, bucket
 import uvicorn
 import datetime
+from urllib.parse import unquote_plus
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
 
 import random
 import json
+
 # just for testing remove later
 from fastapi.middleware.cors import CORSMiddleware
 
@@ -24,14 +26,14 @@ FILES_REF = db.collection('files')
 ROOMS_REF = db.collection('rooms')
 MAX_FILE_SIZE = 5 * 1024 * 1024
 REFRESH_TIME_DAYS = 1
-with open('backend/common_words.json', 'r') as f:
+with open('common_words.json', 'r') as f:
     COMMON_WORDS = json.load(f)
 
 
 @app.on_event("startup")
 def startup_tasks():
     scheduler = AsyncIOScheduler()
-    scheduler.add_job(clean_old_rooms, 'interval', minutes=1)
+    scheduler.add_job(clean_old_rooms, 'interval', minutes=REFRESH_TIME_DAYS)
     scheduler.start()
 
 
@@ -54,8 +56,10 @@ async def get_sorted_files(roomId: str):
 @app.post("/upload/{roomId}")
 async def upload_file(roomId: str, file: UploadFile = File(...)):
     try:
-        if (file.size > MAX_FILE_SIZE):
-            raise HTTPException(status_code=400, detail="File size exceeds limit")
+        chunk = await file.read(MAX_FILE_SIZE + 1)
+        file.file.seek(0)
+        if len(chunk) >= MAX_FILE_SIZE:
+            return {"filename": None, "url": None, 'error': "File size exceeds limit"}  
 
         # store in storage
         blob = bucket.blob(file.filename)
@@ -73,7 +77,7 @@ async def upload_file(roomId: str, file: UploadFile = File(...)):
         return {"filename": file.filename, "url": download_url, 'error': None}
 
     except Exception as e:
-        raise {"filename": None, "url": None, 'error': e}
+        return {"filename": None, "url": None, 'error': str(e)}  
 
 
 @app.get("/check/{roomId}")
@@ -133,7 +137,7 @@ async def generate_room_id(word_num=3, max_attempts=10):
         
 
 async def clean_old_rooms():
-    time_offset = datetime.datetime.now() - datetime.timedelta(days=REFRESH_TIME_DAYS)
+    time_offset = datetime.datetime.now() - datetime.timedelta(minutes=REFRESH_TIME_DAYS)
 
     room_docs = ROOMS_REF.where('createdAt', '<', time_offset).stream()
 
@@ -150,7 +154,7 @@ async def clean_old_rooms():
                 file_doc.reference.delete()
 
                 blob_name = file_url.split('/')[-1].split('?')[0]
-                blob_name = blob_name.replace('%20', ' ')
+                blob_name = unquote_plus(blob_name)
                 blob = bucket.blob(blob_name)
                 blob.delete()       
 
