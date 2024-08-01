@@ -34,7 +34,7 @@ function SharePage() {
     }
     
     checkRoom();
-  }, [])
+  }, [inSendingProcess])
   
 
   return (

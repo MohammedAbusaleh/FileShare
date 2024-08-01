@@ -56,6 +56,7 @@ async def get_sorted_files(roomId: str):
 @app.post("/upload/{roomId}")
 async def upload_file(roomId: str, file: UploadFile = File(...)):
     try:
+        # I am doing this on the forntend but jsut in case
         chunk = await file.read(MAX_FILE_SIZE + 1)
         file.file.seek(0)
         if len(chunk) >= MAX_FILE_SIZE:

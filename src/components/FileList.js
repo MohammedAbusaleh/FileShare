@@ -17,7 +17,11 @@ function FileList({ files, setFiles, inSendingProcess }) {
         {files.map((file, index) => (
           <button
           key={index}
-          onClick={() => deleteFile(index)}
+          onClick={() => {
+            if (!inSendingProcess) {
+              deleteFile(index);
+            }
+          }}
           className={`w-36 p-2 text-white overflow-hidden whitespace-nowrap text-ellipsis font-bold rounded shadow-md hover:bg-red-500 transition-colors duration-200 text-center ${inSendingProcess && index === 0 ? 'animate-pulse bg-red-300' : 'bg-customeGrey'}`}
           onMouseEnter={() => setHoveredIndex(index)}
           onMouseLeave={() => setHoveredIndex(null)}
