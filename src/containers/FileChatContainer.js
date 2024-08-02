@@ -1,6 +1,8 @@
 import { React, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import FilesChat from '../components/FilesChat';
+import axios from 'axios';
+import { handleError } from '../utils/errorHandler';
 
 function FilesChatContainer({ sharedFiles, setSharedFiles }) {
   const { roomCode } = useParams()
@@ -8,15 +10,15 @@ function FilesChatContainer({ sharedFiles, setSharedFiles }) {
   useEffect(() => {
     async function fetchFiles() {
       try {
-        const response = await fetch(`http://localhost:8000/room/${roomCode}`)
-        if (!response.ok){
-          throw new Error(`Failed to fetch files: ${response.statusText}`)
-        } else {
-          const data = await response.json()
-          setSharedFiles(data.files)
+        const { data } = await axios.get(`http://localhost:8000/room/${roomCode}`)
+
+        if (data.error) {
+          throw new Error(`Failed to fetch files: ${data.error}`)
         }
+
+        setSharedFiles(data.files)
       } catch (error) {
-        console.error('Error uploading files:', error.message)
+        handleError(error, 'Faild to fetch files')
       }
     }
     if (sharedFiles.length === 0) {

@@ -5,6 +5,8 @@ import FileList from '../components/FileList'
 import DragNDrop from '../components/DragNDrop'
 import SendFilesButtonContainer from '../containers/SendFilesButtonContainer';
 import FilesChatContainer from '../containers/FileChatContainer';
+import axios from 'axios';
+import { handleError } from '../utils/errorHandler';
 
 
 function SharePage() {
@@ -20,16 +22,17 @@ function SharePage() {
 
     async function checkRoom() {
       try {
-        const response = await fetch(`http://localhost:8000/check/${roomCode}`)
-        if (!response.ok){
-          throw new Error(`Couldn't find room: ${response.statusText}`)
+        const { data } = await axios.get(`http://localhost:8000/check/${roomCode}`)
+
+        if (data.error) {
+          throw new Error(`An error happend while checking room validity: ${data.error}`)
         }
-        const data = await response.json()
+
         if (!data.doesRoomExists) {
           navigate("/Naughty", { replace: true })
         }
       } catch (error) {
-        console.error('Error uploading files:', error.message)
+        handleError(error, 'There is a problem in the server, Please go to another room')
       }
     }
     

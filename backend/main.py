@@ -2,6 +2,7 @@ from fastapi import FastAPI, HTTPException, File, UploadFile
 from firebase_config import db, bucket
 import uvicorn
 import datetime
+from models import RoomPayload
 from urllib.parse import unquote_plus
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
 
@@ -16,9 +17,9 @@ app = FastAPI()
 # just for testing remove later
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=["http://localhost:3000"],
     allow_credentials=True,
-    allow_methods=["*"],
+    allow_methods=["GET", "POST"],
     allow_headers=["*"],
 )
 
@@ -50,13 +51,13 @@ async def get_sorted_files(roomId: str):
 
         return {'files': files, 'error': None}    
     except Exception as e:
-        raise {'files': None, 'error': e}
+        return {'files': None, 'error': str(e)}
 
 
 @app.post("/upload/{roomId}")
 async def upload_file(roomId: str, file: UploadFile = File(...)):
     try:
-        # I am doing this on the forntend but jsut in case
+        # already checking in frontend but just in case
         chunk = await file.read(MAX_FILE_SIZE + 1)
         file.file.seek(0)
         if len(chunk) >= MAX_FILE_SIZE:
@@ -92,28 +93,28 @@ async def does_room_exist(roomId: str):
         return {"doesRoomExists": len(docs) > 0, "error": None}
 
     except Exception as e:
-        raise {"doesRoomExists": None, "error": e}
+        return {"doesRoomExists": None, "error": str(e)}
 
 
-@app.get("/create-room/{roomId}")
-async def create_room(roomId: str):
+@app.post("/create-room")
+async def create_room(payload: RoomPayload):
     try:
         ROOMS_REF.document().set({
-            "roomId": roomId,
+            "roomId": payload.roomId,
             "createdAt": datetime.datetime.now()
         })
         
-        return {"roomId": roomId, "error": None}
+        return {"roomId": payload.roomId, "error": None}
         
     except Exception as e:
-        raise {"roomId": None, "error": e}
+        return {"roomId": None, "error": str(e)}
 
 
 @app.get("/get-generated-id")
 async def generate_room_id_endpoint():
     try:
         room_id = await generate_room_id()
-        return room_id
+        return {"roomId": room_id, "error": None}
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
@@ -130,7 +131,7 @@ async def generate_room_id(word_num=3, max_attempts=10):
         ).get()
         
         if not any(doc.exists for doc in docs):
-            return {"roomId": room_id, "error": None}
+            return room_id
         
         attempts += 1
     

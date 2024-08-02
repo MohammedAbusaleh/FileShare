@@ -1,30 +1,27 @@
 import React from 'react';
 import { useParams } from 'react-router-dom';
-import { toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
 import axios from 'axios';
 
 import SendFilesButton from '../components/SendFilesButton';
+import { handleError } from '../utils/errorHandler';
 
 function SendFilesButtonContainer({ files, setFiles, setSharedFiles, setInSendingProcess }) {
     const { roomCode } = useParams()
 
-    async function checkForEdgeCases() {
+    async function isThereEdgeCases() {
       if (files.length === 0){
         alert('Add a file genius')
         return true
       }
+      
       try {
-        const response = await axios.get(`http://localhost:8000/check/${roomCode}`)
-
-        if (response.status !== 200){
-          return true
+        const { data } = await axios.get(`http://localhost:8000/check/${roomCode}`)
+        
+        if (!data.doesRoomExists){
+          throw new Error('Room Does Not Exist Anymore')
         }
-        if (!response.data.doesRoomExists) {
-          return true
-        }
-
       } catch (error) {
+        handleError(error, error.message)
         return true
       }
       
@@ -33,12 +30,12 @@ function SendFilesButtonContainer({ files, setFiles, setSharedFiles, setInSendin
     
     async function handleSendingFiles() {
       setInSendingProcess(true)
-
-      if (await checkForEdgeCases()) {
+      
+      if (await isThereEdgeCases()) {
         setInSendingProcess(false)
         return
       }
-
+      
       const formData = new FormData();
       
       for (const file of files) {
@@ -48,35 +45,20 @@ function SendFilesButtonContainer({ files, setFiles, setSharedFiles, setInSendin
           }
 
           formData.append('file', file);
-          const response = await fetch(`http://localhost:8000/upload/${roomCode}`, {
-            method: 'POST',
-            body: formData
+          const { data} = await axios.post(`http://localhost:8000/upload/${roomCode}`, formData, {
+            headers: { 'Content-Type': 'multipart/form-data' }
           })
     
-          if (!response.ok) {
-            throw new Error(`Failed to upload ${file.name}: ${response.statusText}`);
-          }
-
-          const data = await response.json();
-
           if (data.error) {
-              throw new Error(`Error from backend: ${data.error}`);
+              throw new Error(`Failed to send files: ${data.error}`);
           }
            
           setSharedFiles(prevSharedFiles => [
             ...prevSharedFiles,
             { filename: data.filename, fileURL: data.url }
-          ])
-          
+          ])   
         } catch (error) {
-          console.error('Error uploading files:', error)
-          toast.error(`${file.name} failed to upload (check file size)`, {
-            position: "top-left",
-            autoClose: 10000,
-            closeOnClick: true,
-            draggable: true,
-            theme: "colored",
-          })
+          handleError(error, `${file.name} failed to upload (check file size)`)
         } finally {
           setFiles(prevFiles => prevFiles.filter(f => f !== file))          
         }
