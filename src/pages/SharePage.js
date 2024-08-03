@@ -22,7 +22,7 @@ function SharePage() {
 
     async function checkRoom() {
       try {
-        const { data } = await axios.get(`http://localhost:8000/check/${roomCode}`)
+        const { data } = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/check/${roomCode}`)
 
         if (data.error) {
           throw new Error(`An error happend while checking room validity: ${data.error}`)

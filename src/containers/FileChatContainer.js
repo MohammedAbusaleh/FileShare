@@ -10,7 +10,7 @@ function FilesChatContainer({ sharedFiles, setSharedFiles }) {
   useEffect(() => {
     async function fetchFiles() {
       try {
-        const { data } = await axios.get(`http://localhost:8000/room/${roomCode}`)
+        const { data } = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/room/${roomCode}`)
 
         if (data.error) {
           throw new Error(`Failed to fetch files: ${data.error}`)

@@ -40,12 +40,12 @@ function SendFilesButtonContainer({ files, setFiles, setSharedFiles, setInSendin
       
       for (const file of files) {
         try {
-          if (file.size > 5 * 1024 * 1024){
+          if (file.size > parseInt(process.env.REACT_APP_MAX_FILE_SIZE, 10)){
             throw new Error('File is too large')
           }
 
           formData.append('file', file);
-          const { data} = await axios.post(`http://localhost:8000/upload/${roomCode}`, formData, {
+          const { data} = await axios.post(`${process.env.REACT_APP_API_BASE_URL}/upload/${roomCode}`, formData, {
             headers: { 'Content-Type': 'multipart/form-data' }
           })
     

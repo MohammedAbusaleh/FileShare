@@ -23,12 +23,12 @@ function CodeFormContainer() {
     setIsCreating(true)
 
     try {
-      const { data: idData } = await axios.get(`http://localhost:8000/get-generated-id`);
+      const { data: idData } = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/get-generated-id`);
       if (idData.error) {
         throw new Error(`Failed to generate room code (id): ${idData.error}`)
       }
 
-      const { data: roomData } = await axios.post(`http://localhost:8000/create-room`, {roomId: idData.roomId})
+      const { data: roomData } = await axios.post(`${process.env.REACT_APP_API_BASE_URL}/create-room`, {roomId: idData.roomId})
       if (roomData.error) {
         throw new Error(`Failed to create room: ${roomData.error}`)
       }

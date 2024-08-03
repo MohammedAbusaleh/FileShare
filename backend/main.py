@@ -25,7 +25,7 @@ app.add_middleware(
 
 FILES_REF = db.collection('files')
 ROOMS_REF = db.collection('rooms')
-MAX_FILE_SIZE = 5 * 1024 * 1024
+MAX_FILE_SIZE = 5 * 1024 * 1024 # I don't think I need it anymore (already checkin in frontend)
 REFRESH_TIME_DAYS = 1
 with open('common_words.json', 'r') as f:
     COMMON_WORDS = json.load(f)
@@ -34,7 +34,7 @@ with open('common_words.json', 'r') as f:
 @app.on_event("startup")
 def startup_tasks():
     scheduler = AsyncIOScheduler()
-    scheduler.add_job(clean_old_rooms, 'interval', minutes=REFRESH_TIME_DAYS)
+    scheduler.add_job(clean_old_rooms, 'interval', days=REFRESH_TIME_DAYS)
     scheduler.start()
 
 
@@ -139,7 +139,7 @@ async def generate_room_id(word_num=3, max_attempts=10):
         
 
 async def clean_old_rooms():
-    time_offset = datetime.datetime.now() - datetime.timedelta(minutes=REFRESH_TIME_DAYS)
+    time_offset = datetime.datetime.now() - datetime.timedelta(days=REFRESH_TIME_DAYS)
 
     room_docs = ROOMS_REF.where('createdAt', '<', time_offset).stream()
 
@@ -169,4 +169,4 @@ async def clean_old_rooms():
 
 if __name__ == "__main__":
     import uvicorn
-    uvicorn.run(app, host="127.0.0.1", port=8000)
+    uvicorn.run(app, host="localhost", port=8000)
