@@ -1,7 +1,9 @@
 services:
   frontend:
     build:
-      context: ./
+      context: ./frontend
+    volumes:
+      - ./frontend:/myreactdd/frontend
     ports:
       - "3000:3000"
 

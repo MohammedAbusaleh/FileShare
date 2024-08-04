@@ -1,0 +1,21 @@
+FROM node:alpine3.19
+
+WORKDIR /myreactdd/frontend
+
+COPY package.json ./
+COPY package-lock.json ./
+
+RUN npm install
+
+COPY public/ public/
+COPY src/ src/
+COPY tailwind.config.js ./
+COPY postcss.config.js ./
+COPY .env ./
+
+RUN npm install -g serve
+RUN npm run build
+
+EXPOSE 3000
+
+CMD ["serve", "-s", "build", "-l", "3000"]
