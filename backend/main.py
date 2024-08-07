@@ -39,6 +39,9 @@ def startup_tasks():
     scheduler.add_job(clean_old_rooms, 'interval', days=REFRESH_TIME_DAYS)
     scheduler.start()
 
+@app.get("/")
+async def ping():
+    return {'ping':'pong'}
 
 @app.get("/room/{roomId}")
 async def get_sorted_files(roomId: str):
@@ -171,4 +174,4 @@ async def clean_old_rooms():
 
 if __name__ == "__main__":
     import uvicorn
-    uvicorn.run(app, host="localhost", port=8000)
+    uvicorn.run(app, host="34.173.127.51", port=8000)

@@ -36,7 +36,7 @@ function CodeFormContainer() {
       navigate(`/room/${roomData.roomId}`)
 
     } catch (error) {
-      handleError(error, `Failed to create room, please try again later`)
+      handleError(error, `${error}`)
     } finally {
       setIsCreating(false)
     }
